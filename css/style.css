@@ -1,0 +1,27 @@
+.col{
+    margin: 10px;
+    width: 400px;
+    height: 400px;
+    border: 2px solid black;
+}
+.row-col {
+    display: flex;
+    justify-content: center;
+}
+.cardOne {
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid black;
+}
+.forms-create-card{
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid black;
+}
+.forms-create-card{
+    width: 400px;
+    height: 400px;
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid black;
+}
