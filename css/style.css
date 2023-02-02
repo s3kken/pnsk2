@@ -1,8 +1,8 @@
 .col{
     margin: 10px;
     width: 400px;
-    height: 400px;
-    border: 2px solid black;
+    height: 800px;
+    border: 1px solid black;
 }
 .row-col {
     display: flex;
@@ -11,17 +11,28 @@
 .cardOne {
     margin: 10px;
     padding: 20px;
-    border: 2px solid black;
+    border: 1px solid black;
 }
 .forms-create-card{
     margin: 10px;
     padding: 20px;
-    border: 2px solid black;
-}
-.forms-create-card{
+    border: 1px solid black;
     width: 400px;
-    height: 400px;
-    margin: 10px;
-    padding: 20px;
-    border: 2px solid black;
+    height: 230px;
+}
+.text-form-card{
+    display: flex;
+    flex-direction: column;
+}
+textarea{
+    height: 100px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    resize: none;
+}
+input{
+    margin-top: 10px;
+}
+#title{
+    margin-bottom: 10px;
 }
