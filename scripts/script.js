@@ -45,13 +45,13 @@ Vue.component('card', {
     <div>
         <div class="cardOne"  v-for="card in cards">
             <p>{{ card.title }}</p>
-        <ul>
-                <li>{{ card.note1 }}</li>
-                <li>{{ card.note2 }}</li>
-                <li>{{ card.note3 }}</li>
-                <li>{{ card.note4 }}</li>
-                <li>{{ card.note5 }}</li>
-        </ul>
+        <div class="ul">
+               <p>{{ card.note1 }} </p>
+               <p>{{ card.note2 }} </p>
+               <p>{{ card.note3 }} </p>
+               <p>{{ card.note4 }} </p>
+               <p>{{ card.note5 }} </p>
+        </div>
         </div>
            </div>
 
@@ -76,6 +76,12 @@ Vue.component('create-card', {
         <input v-model="note4" id="note" type="text" placeholder="4 пункт">
         <input v-model="note5" id="note" type="text" placeholder="5 пункт">
     <button type="submit">Создать</button>
+    <p v-if="errors.length">
+ <ul>
+   <li v-for="error in errors">{{ error }}</li>
+ </ul>
+</p>
+
     </form>
     </div>
     `,
@@ -87,10 +93,14 @@ Vue.component('create-card', {
             note3: null,
             note4: null,
             note5: null,
+            errors: []
+
         }
     },
     methods:{
+
         onSubmit(){
+            if(this.note1 && this.note2 && this.note3) {
             let createCard = {
                 title: this.title,
                 note1: this.note1,
@@ -106,7 +116,13 @@ Vue.component('create-card', {
             this.note3 = null,
             this.note4 = null,
             this.note5 = null
+        } else {
+            if(!this.note1) this.errors.push("Заполните первый пункт!")
+            if(!this.note2) this.errors.push("Заполните второй пункт!")
+            if(!this.note3) this.errors.push("Заполните третий пункт!")
         }
+    }
+     
     }
 })
 
