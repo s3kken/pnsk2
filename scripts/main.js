@@ -27,7 +27,7 @@ Vue.component('columns', {
 
 Vue.component('column-1',{
     template:`
-    <div>
+    <div class="faf">
     <card></card>
     </div>
     `
