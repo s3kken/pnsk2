@@ -3,8 +3,8 @@ let eventBus = new Vue()
 Vue.component('columns', {
     data() {
         return {
-            cards: [],
-            column1: []
+            displayForm: true,
+            cards: [[],[],[]],
         }
     },
     template:
@@ -12,7 +12,7 @@ Vue.component('columns', {
     <div class="list-notes">
     <div class="row-col">
         <create-card></create-card>
-        <div class="col">
+        <div class="col" @click="lengthColumn">
         <card :cards="cards"></card>
         </div>
         <div class="col">
@@ -25,11 +25,28 @@ Vue.component('columns', {
     </div>
     `,
     methods: {
-
+        lengthColumn(){
+            this.displayForm = false
+            let countFirst = this.cards[0].length
+            let countSecond = this.cards[1].length
+            console.log(countFirst);
+            console.log(countSecond);
+            if(countFirst >= 3){
+                this.displayForm = false
+            }else{
+                this.displayForm = true
+            }
+            if(countSecond >= 5){
+                this.displayForm = false
+            }else{
+                this.displayForm = true
+            }
+        }
     },
     mounted() {
         eventBus.$on('card-submitted', card => {
-            this.cards.push(card)
+            this.cards[0].push(card)
+            //console.log(this.cards)
         })
     }
 })
@@ -43,14 +60,10 @@ Vue.component('card', {
     template:`
     <div>
     <div>
-        <div class="cardOne"  v-for="card in cards">
+        <div class="cardOne"  v-for="card in cards[0]">
             <p>{{ card.title }}</p>
         <div class="ul">
-               <p>{{ card.note1 }} </p>
-               <p>{{ card.note2 }} </p>
-               <p>{{ card.note3 }} </p>
-               <p>{{ card.note4 }} </p>
-               <p>{{ card.note5 }} </p>
+               <p @click="donePoint(card.note1)" v-for="points in card.notes">{{ points.pointTitle }} </p>
         </div>
         </div>
            </div>
@@ -58,24 +71,28 @@ Vue.component('card', {
     </div>
     `,
     methods: {
+        donePoint(note){
+            //console.log(note)
+        }
     },
 })
 
 Vue.component('create-card', {
-
+    props: {
+        displayForm: Boolean
+    },
     template:`
     <div class="forms-create-card">
-    <form class="text-form-card" @submit.prevent="onSubmit">
+    <form class="text-form-card" @submit.prevent="onSubmit" >
     <label for="title">Заголовок</label>
     <input v-model="title" id="title" type="text" placeholder="Заголовок">
     <label for="note">Введите свои заметки</label>
-<!--    <textarea v-model="notes" id="note" placeholder="Пункты"></textarea>-->
-        <input v-model="note1" id="note" type="text" placeholder="1 пункт">
-        <input v-model="note2" id="note" type="text" placeholder="2 пункт">
-        <input v-model="note3" id="note" type="text" placeholder="3 пункт">
-        <input v-model="note4" id="note" type="text" placeholder="4 пункт">
-        <input v-model="note5" id="note" type="text" placeholder="5 пункт">
-    <button type="submit">Создать</button>
+        <input v-model="note1.pointTitle" id="note" type="text" placeholder="1 пункт">
+        <input v-model="note2.pointTitle" id="note" type="text" placeholder="2 пункт">
+        <input v-model="note3.pointTitle" id="note" type="text" placeholder="3 пункт">
+        <input v-model="note4.pointTitle" id="note" type="text" placeholder="4 пункт">
+        <input v-model="note5.pointTitle" id="note" type="text" placeholder="5 пункт">
+    <button type="submit" :disabled="displayForm">Создать</button>
     <p v-if="errors.length">
  <ul>
    <li v-for="error in errors">{{ error }}</li>
@@ -88,41 +105,64 @@ Vue.component('create-card', {
     data(){
         return{
             title: null,
-            note1: null,
-            note2: null,
-            note3: null,
-            note4: null,
-            note5: null,
+            pointStatus: false,
+            note1: {
+                pointTitle: ''
+            },
+            note2: {
+                pointTitle: ''
+            },
+            note3: {
+                pointTitle: ''
+            },
+            note4: {
+                pointTitle: ''
+            },
+            note5: {
+                pointTitle: ''
+            },
             errors: []
 
         }
     },
-    methods:{
+    methods: {
 
-        onSubmit(){
-            if(this.note1 && this.note2 && this.note3) {
-            let createCard = {
-                title: this.title,
-                note1: this.note1,
-                note2: this.note2,
-                note3: this.note3,
-                note4: this.note4,
-                note5: this.note5,
+        onSubmit() {
+            if (this.note1 && this.note2 && this.note3) {
+                let createCard = {
+                    title: this.title,
+                    notes: [
+                        {
+                            pointTitle: this.note1.pointTitle,
+                            pointStatus: this.pointStatus
+                        },
+                        {
+                            pointTitle: this.note2.pointTitle,
+                            pointStatus: this.pointStatus
+                        },
+                        {
+                            pointTitle: this.note3.pointTitle,
+                            pointStatus: this.pointStatus
+                        },
+                        {
+                            pointTitle: this.note4.pointTitle,
+                            pointStatus: this.pointStatus
+                        },
+                        {
+                            pointTitle: this.note5.pointTitle,
+                            pointStatus: this.pointStatus
+                        },
+                    ],
+                }
+                eventBus.$emit('card-submitted', createCard)
+                this.title = null,
+                    this.notes = []
+            } else {
+                if (!this.note1) this.errors.push("Заполните первый пункт!")
+                if (!this.note2) this.errors.push("Заполните второй пункт!")
+                if (!this.note3) this.errors.push("Заполните третий пункт!")
             }
-            eventBus.$emit('card-submitted', createCard)
-            this.title = null,
-            this.note1 = null,
-            this.note2 = null,
-            this.note3 = null,
-            this.note4 = null,
-            this.note5 = null
-        } else {
-            if(!this.note1) this.errors.push("Заполните первый пункт!")
-            if(!this.note2) this.errors.push("Заполните второй пункт!")
-            if(!this.note3) this.errors.push("Заполните третий пункт!")
         }
-    }
-     
     }
 })
 
