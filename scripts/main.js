@@ -3,7 +3,9 @@ let eventBus = new Vue()
 Vue.component('columns', {
     data() {
         return {
-            
+                cardsOne: [],
+                cardsTwo: [],
+                cardsThree: []
         }
     },
     template:
@@ -12,7 +14,7 @@ Vue.component('columns', {
     <div class="row-col">
         <create-card></create-card>
         <div class="col">
-            <column-1></column-1>
+            <column-1 :cardsOne = "cardsOne"></column-1>
         </div>
         <div class="col">
             <column-2></column-2>
@@ -23,14 +25,26 @@ Vue.component('columns', {
     </div>
     </div>
     `,
+    mounted() {
+        eventBus.$on('card-submitted', createCard => {
+            console.log(createCard)
+            this.cardsOne.push(createCard)  
+        })
+    }
 })
 
 Vue.component('column-1',{
+
     template:`
-    <div class="faf">
-    <card></card>
+    <div class="faf" v-for="createCard in cardsOne">
+    <card :createCard="createCard"></card>
     </div>
-    `
+    `,
+    props: {
+        cardsOne:{
+            type: Array,
+        },
+    },
 })
 Vue.component('column-2',{
     template:`
@@ -50,19 +64,23 @@ Vue.component('card',{
 
       template:`
       <div>
-      <div>
+        <div>
           <div class="cardOne">
-              <p>{{ card.title }}</p>
+              <p>{{ createCard.title }}</p>
           <ul>
-                 <li v-for="point in point.arrNotes">
+                 <li v-for="point in createCard.arrNotes">
                     {{point.pointTitle}}
                  </li>
           </ul>
           </div>
-             </div>
-  
+        </div>
       </div>
       `,
+      props: {
+        createCard: {
+            type: Object
+        }
+      }
 })
 Vue.component('create-card',{
     template:`
@@ -78,7 +96,7 @@ Vue.component('create-card',{
     <button type="submit">Создать</button>
     <p v-if="errors.length">
  <ul>
-   <li v-for="error in errors">{{ error }}</li>
+//    <li v-for="error in errors">{{ error }}</li>
  </ul>
 </p>
     </form>
@@ -92,6 +110,7 @@ Vue.component('create-card',{
             note3: null,
             note4: null,
             note5: null,
+            errors: []
         }
     },
     methods: {
