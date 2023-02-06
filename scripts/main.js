@@ -1,6 +1,11 @@
 let eventBus = new Vue()
 
 Vue.component('columns', {
+    props: {
+        check: {
+            type: Boolean
+        }
+    },
     data() {
         return {
             cardsOne: [],
@@ -12,7 +17,7 @@ Vue.component('columns', {
         `
     <div class="list-notes">
     <div class="row-col">
-        <create-card></create-card>
+        <create-card :check="check"></create-card>
         <div class="col">
             <card v-for="createCard in cardsOne" :createCard="createCard"></card>
         </div>
@@ -27,8 +32,14 @@ Vue.component('columns', {
     `,
     mounted() {
         eventBus.$on('card-submitted', createCard => {
+            if(this.cardsOne.length < 3){
             this.cardsOne.push(createCard)
             console.log(this.cardsOne)
+                if(this.cardsOne.length == 3){
+                    this.check = false
+                }
+            }
+            
         })
     },
 })
@@ -56,6 +67,11 @@ Vue.component('card', {
 })
 
 Vue.component('create-card', {
+    props: {
+        check: {
+            type: Boolean
+        }
+    },
     template: `
     <div class="forms-create-card">
     <form class="text-form-card" @submit.prevent="onSubmit">
@@ -66,7 +82,7 @@ Vue.component('create-card', {
         <input v-model="note3" type="text" placeholder="3 пункт">
         <input v-model="note4" type="text" placeholder="4 пункт">
         <input v-model="note5" type="text" placeholder="5 пункт">
-    <button type="submit">Создать</button>
+    <button type="submit" :disabled = "!check">Создать</button>
     <p v-if="errors.length">
  <ul>
    <li v-for="error in errors">{{ error }}</li>
@@ -100,6 +116,7 @@ Vue.component('create-card', {
                         { pointTitle: this.note5, pointStatus: false },
                     ]
                 }
+                console.log(this.check)
                 eventBus.$emit('card-submitted', createCard)
 
                 this.title = null
@@ -120,5 +137,10 @@ Vue.component('create-card', {
 })
 let app = new Vue({
     el: '#app',
+    data(){
+        return{
+            check: true
+        }
+    }
 
 })
