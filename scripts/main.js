@@ -22,10 +22,10 @@ Vue.component('columns', {
             <card v-for="createCard in cardsOne" :createCard="createCard"></card>
         </div>
         <div class="col">
-            
+            <card v-for="createCard in cardsTwo" :createCard="createCard"></card>
         </div>
         <div class="col">
-            
+            <card v-for="createCard in cardsThree" :createCard="createCard"></card>
         </div>
     </div>
     </div>
@@ -62,6 +62,11 @@ Vue.component('card', {
     props: {
         createCard: {
             type: Object
+        }
+    },
+    methods: {
+        pointComplited(point, createCard){
+
         }
     }
 })
