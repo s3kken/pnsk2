@@ -3,32 +3,24 @@ let eventBus = new Vue()
 Vue.component('columns', {
     data() {
         return {
-                cardsOne: [],
-                cardsTwo: [],
-                cardsThree: []
+            cardsOne: [],
+            cardsTwo: [],
+            cardsThree: []
         }
     },
     template:
-    `
+        `
     <div class="list-notes">
     <div class="row-col">
         <create-card></create-card>
         <div class="col">
-        <div class="cardOne" v-for="card in cardsOne">
-        <p>{{ card.title }}</p>
-              <ul>
-                     <li v-for="point in card.arrNotes">
-                        {{point.pointTitle}}
-                     </li>
-              </ul>
-    
-        </div>
+            <card v-for="createCard in cardsOne" :createCard="createCard"></card>
         </div>
         <div class="col">
-            <column-2></column-2>
+            
         </div>
         <div class="col">
-            <column-3></column-3>
+            
         </div>
     </div>
     </div>
@@ -41,35 +33,30 @@ Vue.component('columns', {
     },
 })
 
-Vue.component('column1',{
-    props: {
-        cardsOne:{
-            type: Array,
-        },
-    },
-    template:`
-
+Vue.component('card', {
+    template: `
+    <div>
+      <div>
+        <div class="cardOne">
+          <p>{{ createCard.title }}</p>
+          <ul>
+              <li v-for="point in createCard.arrNotes">
+              {{point.pointTitle}}
+              </li>
+          </ul>
+        </div>
+      </div>
+    </div>
     `,
-
-
-})
-Vue.component('column-2',{
-    template:`
-    <div>
-
-    </div>
-    `
-})
-Vue.component('column-3',{
-    template:`
-    <div>
-
-    </div>
-    `
+    props: {
+        createCard: {
+            type: Object
+        }
+    }
 })
 
-Vue.component('create-card',{
-    template:`
+Vue.component('create-card', {
+    template: `
     <div class="forms-create-card">
     <form class="text-form-card" @submit.prevent="onSubmit">
     <label for="title">Заголовок</label>
@@ -88,8 +75,8 @@ Vue.component('create-card',{
     </form>
     </div>
     `,
-    data(){
-        return{
+    data() {
+        return {
             title: null,
             note1: null,
             note2: null,
@@ -105,15 +92,16 @@ Vue.component('create-card',{
             if (this.note1 && this.note2 && this.note3) {
                 let createCard = {
                     title: this.title,
-                    arrNotes:[
-                        {pointTitle: this.note1, pointStatus: false },
-                        {pointTitle: this.note2, pointStatus: false },
-                        {pointTitle: this.note3, pointStatus: false },
-                        {pointTitle: this.note4, pointStatus: false },
-                        {pointTitle: this.note5, pointStatus: false },
+                    arrNotes: [
+                        { pointTitle: this.note1, pointStatus: false },
+                        { pointTitle: this.note2, pointStatus: false },
+                        { pointTitle: this.note3, pointStatus: false },
+                        { pointTitle: this.note4, pointStatus: false },
+                        { pointTitle: this.note5, pointStatus: false },
                     ]
                 }
                 eventBus.$emit('card-submitted', createCard)
+
                 this.title = null
                 this.arrNotes = null
                 this.note1 = null
