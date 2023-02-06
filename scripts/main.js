@@ -14,7 +14,7 @@ Vue.component('columns', {
     <div class="row-col">
         <create-card></create-card>
         <div class="col">
-            <column-1 :cardsOne = "cardsOne"></column-1>
+            <column1 :cardsOne = "cardsOne"></column1>
         </div>
         <div class="col">
             <column-2></column-2>
@@ -27,65 +27,50 @@ Vue.component('columns', {
     `,
     mounted() {
         eventBus.$on('card-submitted', createCard => {
-            console.log(createCard)
-            this.cardsOne.push(createCard)  
+            this.cardsOne.push(createCard)
+            console.log(this.cardsOne)
         })
-    }
+    },
 })
 
-Vue.component('column-1',{
-
-    template:`
-    <div class="faf" v-for="createCard in cardsOne">
-    <card :createCard="createCard"></card>
-    </div>
-    `,
+Vue.component('column1',{
     props: {
         cardsOne:{
             type: Array,
         },
     },
+    template:`
+    <div class="cardOne" v-for="card in cardsOne">
+    <p>{{ card.title }}</p>
+          <ul>
+                 <li v-for="point in card.arrNotes">
+                    {{point.pointTitle}}
+                 </li>
+          </ul>
+    </div>
+    `,
+
+
 })
 Vue.component('column-2',{
     template:`
     <div>
-    <card></card>
+
     </div>
     `
 })
 Vue.component('column-3',{
     template:`
     <div>
-    <card></card>
+
     </div>
     `
 })
-Vue.component('card',{
 
-      template:`
-      <div>
-        <div>
-          <div class="cardOne">
-              <p>{{ createCard.title }}</p>
-          <ul>
-                 <li v-for="point in createCard.arrNotes">
-                    {{point.pointTitle}}
-                 </li>
-          </ul>
-          </div>
-        </div>
-      </div>
-      `,
-      props: {
-        createCard: {
-            type: Object
-        }
-      }
-})
 Vue.component('create-card',{
     template:`
     <div class="forms-create-card">
-    <form class="text-form-card" @submit.prevent="onSubmit" >
+    <form class="text-form-card" @submit.prevent="onSubmit">
     <label for="title">Заголовок</label>
     <input v-model="title" id="title" type="text" placeholder="Заголовок">
         <input v-model="note1" type="text" placeholder="1 пункт">
@@ -96,7 +81,7 @@ Vue.component('create-card',{
     <button type="submit">Создать</button>
     <p v-if="errors.length">
  <ul>
-//    <li v-for="error in errors">{{ error }}</li>
+   <li v-for="error in errors">{{ error }}</li>
  </ul>
 </p>
     </form>
@@ -129,6 +114,7 @@ Vue.component('create-card',{
                 }
                 eventBus.$emit('card-submitted', createCard)
                 this.title = null
+                this.arrNotes = null
                 this.note1 = null
                 this.note2 = null
                 this.note3 = null
