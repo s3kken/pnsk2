@@ -14,7 +14,15 @@ Vue.component('columns', {
     <div class="row-col">
         <create-card></create-card>
         <div class="col">
-            <column1 :cardsOne = "cardsOne"></column1>
+        <div class="cardOne" v-for="card in cardsOne">
+        <p>{{ card.title }}</p>
+              <ul>
+                     <li v-for="point in card.arrNotes">
+                        {{point.pointTitle}}
+                     </li>
+              </ul>
+    
+        </div>
         </div>
         <div class="col">
             <column-2></column-2>
@@ -40,14 +48,7 @@ Vue.component('column1',{
         },
     },
     template:`
-    <div class="cardOne" v-for="card in cardsOne">
-    <p>{{ card.title }}</p>
-          <ul>
-                 <li v-for="point in card.arrNotes">
-                    {{point.pointTitle}}
-                 </li>
-          </ul>
-    </div>
+
     `,
 
 
