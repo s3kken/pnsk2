@@ -42,18 +42,7 @@ Vue.component('columns', {
         })
     },
     methods: {
-        pointComplete(card, note){
-            for(let i in this.cardsOne){
-                if(this.cardsOne[i] == card){
-                    for(let j in this.cardsOne[i].arrNotes){
-                        if(this.cardsOne[i].arrNotes[j].pointTitle == note){ //проверка на наличие пункта 
-                            this.cardsOne[i].arrNotes[j].pointStatus = true
-                            console.log(this.cardsOne[i].arrNotes[j].pointStatus)
-                        }
-                    }
-                }
-            }
-        }
+
     }
 })
 
@@ -64,10 +53,12 @@ Vue.component('card', {
         <div class="cardOne">
           <p>{{ createCard.title }}</p>
           <ul>
-              <li v-for="point in createCard.arrNotes"
-              
-              >
-              {{point.pointTitle}}
+              <li class="container" v-for="point in createCard.arrNotes">
+              <div @click="point.pointStatus = true">
+                    {{point.pointTitle}}
+                </div>
+                <div v-if="point.pointTitle != null && point.pointStatus === false"></div >
+                <div v-else-if="point.pointStatus == true">✔️</div>
               </li>
           </ul>
         </div>
