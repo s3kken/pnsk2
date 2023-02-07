@@ -34,7 +34,6 @@ Vue.component('columns', {
         eventBus.$on('card-submitted', createCard => {
             if(this.cardsOne.length < 3){
             this.cardsOne.push(createCard)
-            console.log(this.cardsOne)
                 if(this.cardsOne.length == 3){
                     this.check = false
                 }
@@ -42,6 +41,20 @@ Vue.component('columns', {
             
         })
     },
+    methods: {
+        pointComplete(card, note){
+            for(let i in this.cardsOne){
+                if(this.cardsOne[i] == card){
+                    for(let j in this.cardsOne[i].arrNotes){
+                        if(this.cardsOne[i].arrNotes[j].pointTitle == note){ //проверка на наличие пункта 
+                            this.cardsOne[i].arrNotes[j].pointStatus = true
+                            console.log(this.cardsOne[i].arrNotes[j].pointStatus)
+                        }
+                    }
+                }
+            }
+        }
+    }
 })
 
 Vue.component('card', {
@@ -51,7 +64,9 @@ Vue.component('card', {
         <div class="cardOne">
           <p>{{ createCard.title }}</p>
           <ul>
-              <li v-for="point in createCard.arrNotes">
+              <li v-for="point in createCard.arrNotes"
+              
+              >
               {{point.pointTitle}}
               </li>
           </ul>
@@ -62,13 +77,13 @@ Vue.component('card', {
     props: {
         createCard: {
             type: Object
-        }
+        },
     },
     methods: {
-        pointComplited(point, createCard){
+       
+    },
 
-        }
-    }
+
 })
 
 Vue.component('create-card', {
@@ -121,7 +136,6 @@ Vue.component('create-card', {
                         { pointTitle: this.note5, pointStatus: false },
                     ]
                 }
-                console.log(this.check)
                 eventBus.$emit('card-submitted', createCard)
 
                 this.title = null
