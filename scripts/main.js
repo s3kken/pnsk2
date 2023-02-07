@@ -19,13 +19,13 @@ Vue.component('columns', {
     <div class="row-col">
         <create-card :check="check"></create-card>
         <div class="col">
-            <card v-for="createCard in cardsOne" :createCard="createCard"></card>
+        <card :cardList="cardsOne" :ChangeNote="ChangeNote"></card>
         </div>
         <div class="col">
-            <card v-for="createCard in cardsTwo" :createCard="createCard"></card>
+        <card :cardList="cardsTwo" :ChangeNote="ChangeNote"></card>
         </div>
         <div class="col">
-            <card v-for="createCard in cardsThree" :createCard="createCard"></card>
+        <card :cardList="cardsThree" :ChangeNote="ChangeNote"></card>
         </div>
     </div>
     </div>
@@ -42,19 +42,63 @@ Vue.component('columns', {
         })
     },
     methods: {
+        ChangeNote(card, note) {
 
+            let count = 0; // Количество заметок без null
+            let num = 0; // Номер заметки
+
+            for (let i in card.arrNotes) {
+                if (card.arrNotes[i].pointTitle != null) // Проверка заметки на null
+                    count++;
+
+                if (card.arrNotes[i].pointTitle == note) // Поис номера заметки по названию
+                    num = i;
+            }
+            
+            if (this.cardsOne.indexOf(card) >= 0) { // Проверка, что карточка с 1-ой колонки
+                if (this.cardsTwo.length < 5) { // Првоерка длинны 2-ой колонки для редактирования заметок
+                    if ((100 / count) * card.count_t > 50) {
+                        this.cardsTwo.push(card);
+                        this.cardsOne.splice(this.cardsOne.indexOf(card), 1)
+
+                        if (this.check == false && this.cardsOne.length != 3) // Проверка блокировки на добавления карточки
+                            this.check = true;
+                    }
+                } else {
+                    card.arrNotes[num].pointStatus = false;
+                    card.count_t -= 1;
+                    return;
+                }
+            }
+
+            if (this.cardsTwo.indexOf(card) >= 0) { // Проверка, что карточка с 2-ой колонки
+                if ((100 / count) * card.count_t == 100) {
+                    this.cardsThree.push(card);
+                    this.cardsTwo.splice(this.cardsTwo.indexOf(card), 1);
+                }
+
+                return;
+            }
+
+            if (this.cardsThree.indexOf(card) >= 0) { // Проверка, что карточка с 3-ей колонки
+                card.count_t -= 1;
+                return;
+            }
+        }
     }
 })
 
 Vue.component('card', {
     template: `
     <div>
-      <div>
+      <div v-for="createCard in cardList">
         <div class="cardOne">
           <p>{{ createCard.title }}</p>
           <ul>
               <li class="container" v-for="point in createCard.arrNotes">
-              <div @click="point.pointStatus = true">
+              <div  @click="createCard.count_t = Check(point.pointStatus, createCard.count_t),
+              point.pointStatus = true,
+              ChangeNote(createCard, point.pointTitle)">
                     {{point.pointTitle}}
                 </div>
                 <div v-if="point.pointTitle != null && point.pointStatus === false"></div >
@@ -69,10 +113,20 @@ Vue.component('card', {
         createCard: {
             type: Object
         },
+        cardList: [],
+        ChangeNote:{
+            type: Function
+        },
     },
     methods: {
-       
-    },
+        Check(status, count_t) {
+            if (status == false) {
+                count_t++;
+                return count_t;
+            }
+            return count_t;
+        }
+    }
 
 
 })
@@ -125,7 +179,8 @@ Vue.component('create-card', {
                         { pointTitle: this.note3, pointStatus: false },
                         { pointTitle: this.note4, pointStatus: false },
                         { pointTitle: this.note5, pointStatus: false },
-                    ]
+                    ],
+                    count_t: 0
                 }
                 eventBus.$emit('card-submitted', createCard)
 
