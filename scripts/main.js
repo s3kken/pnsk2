@@ -73,6 +73,7 @@ Vue.component('columns', {
 
             if (this.cardsTwo.indexOf(card) >= 0) { // Проверка, что карточка с 2-ой колонки
                 if ((100 / count) * card.count_t == 100) {
+                    card.date_c = new Date().toLocaleString();
                     this.cardsThree.push(card);
                     this.cardsTwo.splice(this.cardsTwo.indexOf(card), 1);
                 }
@@ -105,6 +106,9 @@ Vue.component('card', {
                 <div v-else-if="point.pointStatus == true">✔️</div>
               </li>
           </ul>
+          <div v-if="createCard.date_c != null">
+          {{createCard.date_c}}
+          </div>
         </div>
       </div>
     </div>
@@ -180,7 +184,8 @@ Vue.component('create-card', {
                         { pointTitle: this.note4, pointStatus: false },
                         { pointTitle: this.note5, pointStatus: false },
                     ],
-                    count_t: 0
+                    count_t: 0,
+                    date_c: null
                 }
                 eventBus.$emit('card-submitted', createCard)
 
