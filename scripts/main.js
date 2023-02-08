@@ -10,7 +10,9 @@ Vue.component('columns', {
         return {
             cardsOne: [],
             cardsTwo: [],
-            cardsThree: []
+            cardsThree: [],
+            count: 0,
+            num: 0
         }
     },
     template:
@@ -44,20 +46,57 @@ Vue.component('columns', {
     methods: {
         ChangeNote(card, note) {
 
-            let count = 0; // Количество заметок без null
-            let num = 0; // Номер заметки
+            this.count = this.countNotes(card);
+            this.num = this.numNotes(card, note);
 
+            
+            this.checkFirstColumn(card);
+            this.checkSecondColumn(card);
+            if(this.cardsOne[0]) {
+                this.count = this.countNotes(this.cardsOne[0]);
+                this.num = this.numNotes(this.cardsOne[0], note);
+                this.checkFirstColumn(this.cardsOne[0]);
+                return;
+            }
+            if(this.cardsOne[1]) {
+                this.count = this.countNotes(this.cardsOne[1]);
+                this.num = this.numNotes(this.cardsOne[1], note);
+                this.checkFirstColumn(this.cardsOne[1]);
+                return;
+            }
+            if(this.cardsOne[2]) {
+                this.count = this.countNotes(this.cardsOne[2]);
+                this.num = this.numNotes(this.cardsOne[2], note);
+                this.checkFirstColumn(this.cardsOne[2]);
+                return;
+            }
+            
+
+            if (this.cardsThree.indexOf(card) >= 0) { // Проверка, что карточка с 3-ей колонки
+                card.count_t -= 1;
+                return;
+            }
+        },
+        countNotes(card) {
+            let count = 0
             for (let i in card.arrNotes) {
                 if (card.arrNotes[i].pointTitle != null) // Проверка заметки на null
                     count++;
-
+            }
+            return count;
+        },
+        numNotes(card, note) {
+            let num = 0
+            for (let i in card.arrNotes) {
                 if (card.arrNotes[i].pointTitle == note) // Поис номера заметки по названию
                     num = i;
             }
-            
+            return num;
+        },
+        checkFirstColumn(card) {
             if (this.cardsOne.indexOf(card) >= 0) { // Проверка, что карточка с 1-ой колонки
                 if (this.cardsTwo.length < 5) { // Првоерка длинны 2-ой колонки для редактирования заметок
-                    if ((100 / count) * card.count_t > 50) {
+                    if ((100 / this.count) * card.count_t > 50) {
                         this.cardsTwo.push(card);
                         this.cardsOne.splice(this.cardsOne.indexOf(card), 1)
 
@@ -65,28 +104,22 @@ Vue.component('columns', {
                             this.check = true;
                     }
                 } else {
-                    card.arrNotes[num].pointStatus = false;
+                    card.arrNotes[this.num].pointStatus = false;
                     card.count_t -= 1;
-                    return;
                 }
             }
-
+        },
+        checkSecondColumn(card) {
             if (this.cardsTwo.indexOf(card) >= 0) { // Проверка, что карточка с 2-ой колонки
-                if ((100 / count) * card.count_t == 100) {
+                if ((100 / this.count) * card.count_t == 100) {
                     card.date_c = new Date().toLocaleString();
                     this.cardsThree.push(card);
                     this.cardsTwo.splice(this.cardsTwo.indexOf(card), 1);
                 }
-
-                return;
-            }
-
-            if (this.cardsThree.indexOf(card) >= 0) { // Проверка, что карточка с 3-ей колонки
-                card.count_t -= 1;
-                return;
             }
         }
     }
+    
 })
 
 Vue.component('card', {

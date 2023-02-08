@@ -40,3 +40,9 @@ input{
     display: flex;
     justify-content: space-between;
 }
+.color1{
+    background-color: aqua;
+}
+.color2{
+    background-color: indianred;
+}
